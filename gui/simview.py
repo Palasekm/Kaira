@@ -22,6 +22,7 @@ import gtk
 import gtkutils
 import mainwindow
 import controlseq
+import time
 from netview import NetView, NetViewCanvasConfig
 
 class SimViewTab(mainwindow.Tab):
@@ -92,7 +93,17 @@ class SimCanvasConfig(NetViewCanvasConfig):
         for transition in self.net.transitions():
             if transition.id in enabled:
                transition.box.highlight = (0, 255, 0, 0.85)
-
+  
+    def run(self):
+        time.sleep(1)
+        enabled = list(self.perspective.get_enabled_transitions())
+        if not enabled:
+            self.simview.app.console_write("end")
+            return None
+        for transition in self.net.transitions():
+            if transition.id is enabled[0]:
+                self.fire_transition(transition)
+            
 
 class SimView(gtk.VBox):
 
@@ -139,6 +150,7 @@ class SimView(gtk.VBox):
         self.simulation.sequence.view = self.sequence_view
         self.sequence_view.connect_view("cursor-changed",
                                         lambda w: self.on_cursor_changed())
+        
         box.pack_start(self.sequence_view, True, True)
 
         button = gtk.Button("Show current")
@@ -191,6 +203,14 @@ class SimView(gtk.VBox):
         button.set_stock_id(gtk.STOCK_EXECUTE)
         toolbar.add(button)
         self.button_auto_receive = button
+        
+        toolbar.add(gtk.SeparatorToolItem())
+        
+        button = gtk.ToolButton(None)
+        button.set_tooltip_text("Run")
+        button.set_stock_id(gtk.STOCK_MEDIA_PLAY)
+        button.connect("clicked", lambda w: self.config.run())
+        toolbar.add(button)
         return toolbar
 
 
