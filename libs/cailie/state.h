@@ -392,6 +392,31 @@ namespace ca {
 	};
 
 	typedef StateBase<Net, Activation, Packet> State;
+
+
+	class StateCore
+	{
+		StateCore() { }
+
+		cass::Node *initnode;
+		cass::NodeMap *Nodes;
+
+		void add_state(State *state)
+		{
+			HashDigest hash = state->compute_hash(MHASH_MD5);
+
+			cass::Node n = new cass::Node(hash, state, NULL);
+
+			Nodes[hash] = n;
+
+			if(initnode == NULL)
+			{
+				initnode = n;
+			}
+		}
+
+
+	};
 };
 
 #endif // CAILIE_STATE_H
