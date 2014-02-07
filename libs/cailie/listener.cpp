@@ -190,6 +190,16 @@ void Listener::process_commands(FILE *comm_in, FILE *comm_out)
 			fflush(stdout);
 			continue;
 		}
+//--------------------------------------------------------------------------
+		if (check_prefix(line, "SET_STATE")) {
+			int index;
+			if(1 != sscanf(line, "SET_STATE %i", &index)) {
+				fprintf(comm_out, "Invalid parameters\n");
+				continue;
+			}
+			state = History[index];
+			continue;
+		}
 
 		if (check_prefix(line, "FIRE")) {
 			if (processes[0]->quit_flag) {
@@ -212,6 +222,17 @@ void Listener::process_commands(FILE *comm_in, FILE *comm_out)
 				fprintf(comm_out, "Invalid transition\n");
 				continue;
 			}
+
+//--------------------------------------------------------------------------
+			State *NewState = NULL;
+			NewState = new State(*state);
+			History.push_back(NewState);
+
+			if (FirstState == NULL){
+				FirstState = NewState;
+			}
+
+
 			bool result;
 			if (phases == 1) {
 				result = state->fire_transition_phase1(process_id, transition_def);

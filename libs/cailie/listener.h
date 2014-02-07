@@ -44,6 +44,11 @@ class Listener {
 		pthread_barrier_t *start_barrier;
 		State *state;
 		std::vector<std::string> sequence;
+
+		//-------------------------------------------------
+
+		std::vector<State*> History;
+		//State *FirstState;
 };
 
 }
