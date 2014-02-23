@@ -95,7 +95,6 @@ class SimCanvasConfig(NetViewCanvasConfig):
                transition.box.highlight = (0, 255, 0, 0.85)
   
     def run(self):
-        time.sleep(1)
         enabled = list(self.perspective.get_enabled_transitions())
         if not enabled:
             self.simview.app.console_write("end")
@@ -141,6 +140,9 @@ class SimView(gtk.VBox):
         if path is None:
             return
         self.simulation.set_runinstance_from_history(path[0])
+        #######
+        #self.config.simview.app.console_write("prepare {0}".format(path[0]))
+        self.simulation.prepare_index(path[0])
 
     def _history(self):
         box = gtk.VBox()
@@ -164,6 +166,11 @@ class SimView(gtk.VBox):
                        lambda w: self.app.save_sequence_into_project(
                             self.simulation.sequence.copy()))
         box.pack_start(button, False, False)
+        
+        button = gtk.Button("Set state")
+        button.connect("clicked", lambda w: self.simulation.set_state())
+        box.pack_start(button, False, False)
+                        
         return box
 
     def _simulation_changed(self, new_state):

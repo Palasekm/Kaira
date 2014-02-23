@@ -48,6 +48,7 @@ class Simulation(EventSource):
         self.runinstance = None
         self.sequence = controlseq.ControlSequence()
         self.history_instances = []
+        self.running_index = 0
 
     def connect(self, host, port):
         def inited():
@@ -285,3 +286,20 @@ class Simulation(EventSource):
 
     def is_last_instance_active(self):
         return self.history_instances and self.history_instances[-1] == self.runinstance
+    
+    def set_first(self):
+        self.controller.run_command("SET_FIRST", None)
+        self.set_runinstance_from_history(0)
+        self.history_instances = []
+        self.history_instances.append(self.runinstance)
+        self.sequence = controlseq.ControlSequence()
+        
+    def set_state(self):
+        self.controller.run_command("SET_STATE {0}".format(self.running_index), None)
+        self.set_runinstance_from_history(self.running_index)
+        del self.history_instances[self.running_index+1:]
+    
+    def prepare_index(self, index):
+        self.running_index = index
+        
+      

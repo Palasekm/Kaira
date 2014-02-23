@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "state.h"
+#include "node.h"
 
 namespace ca {
 
@@ -36,6 +37,9 @@ class Listener {
 
 		void prepare_state();
 		void cleanup_state();
+		void save_state();
+		void save_first(State *s);
+		void erase_others(int index);
 
 		int listen_socket;
 		int process_count;
@@ -48,7 +52,7 @@ class Listener {
 		//-------------------------------------------------
 
 		std::vector<State*> History;
-		//State *FirstState;
+		State *FirstState;
 };
 
 }

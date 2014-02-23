@@ -1,6 +1,7 @@
 
 #include "cailie.h"
 #include "listener.h"
+#include "node.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -197,7 +198,37 @@ void Listener::process_commands(FILE *comm_in, FILE *comm_out)
 				fprintf(comm_out, "Invalid parameters\n");
 				continue;
 			}
-			state = History[index];
+
+			if(History.empty()){
+				fprintf(comm_out, "No states in history\n");
+				continue;
+			}
+			else{
+
+				if (History.size() < index){
+					fprintf(comm_out, "Invalid index\n");
+				}
+				else{
+				state = History[index];
+				erase_others(index);
+				}
+			}
+			continue;
+		}
+
+		if (check_prefix(line, "SET_FIRST")) {
+			int index;
+			if(0 != sscanf(line, "SET_FIRST")) {
+				fprintf(comm_out, "Invalid parameters\n");
+				continue;
+			}
+			if(FirstState == NULL){
+				fprintf(comm_out, "First state not exist\n");
+			}
+			else{
+				state = FirstState;
+				erase_others(0);
+			}
 			continue;
 		}
 
@@ -222,16 +253,8 @@ void Listener::process_commands(FILE *comm_in, FILE *comm_out)
 				fprintf(comm_out, "Invalid transition\n");
 				continue;
 			}
-
-//--------------------------------------------------------------------------
-			State *NewState = NULL;
-			NewState = new State(*state);
-			History.push_back(NewState);
-
-			if (FirstState == NULL){
-				FirstState = NewState;
-			}
-
+//-----------------
+			save_state();
 
 			bool result;
 			if (phases == 1) {
@@ -266,6 +289,10 @@ void Listener::process_commands(FILE *comm_in, FILE *comm_out)
 				fprintf(comm_out, "Invalid parameters\n");
 				continue;
 			}
+
+//-----------------
+			save_state();
+
 			bool result = state->receive(process_id, origin_id);
 			write_status(comm_out, result);
 			continue;
@@ -303,4 +330,18 @@ void Listener::cleanup_state()
 	delete state;
 }
 
+void Listener::save_state()
+{
+	State *NewState = NULL;
+	NewState = new State(*state);
+	History.push_back(NewState);
 
+	if (FirstState == NULL){
+		FirstState = NewState;
+	}
+}
+
+void Listener::erase_others(int index)
+{
+	History.erase(History.begin()+index, History.end());
+}
