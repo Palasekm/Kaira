@@ -141,8 +141,8 @@ class SimView(gtk.VBox):
             return
         self.simulation.set_runinstance_from_history(path[0])
         #######
-        #self.config.simview.app.console_write("prepare {0}".format(path[0]))
-        self.simulation.prepare_index(path[0])
+        self.config.simview.app.console_write("prepare {0}".format(path[0]))
+        self.simulation.set_current_index(path[0])
 
     def _history(self):
         box = gtk.VBox()

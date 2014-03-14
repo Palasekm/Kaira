@@ -205,7 +205,6 @@ class SimpleListBase(gtk.ScrolledWindow):
     def hide_headers(self):
         self.view.set_headers_visible(False)
 
-
 class SimpleList(SimpleListBase):
 
     def __init__(self, columns):
@@ -222,7 +221,13 @@ class SimpleList(SimpleListBase):
                 return i
             i = self.store.iter_next(i)
         return None
-
+    
+    def remove_last_row(self):
+        i = self.store.get_iter_first()
+        while i is not None:
+            j = i
+            i = self.store.iter_next(i)
+        self.store.remove(j)         
 
 class SimpleTree(SimpleListBase):
 

@@ -48,7 +48,7 @@ class Simulation(EventSource):
         self.runinstance = None
         self.sequence = controlseq.ControlSequence()
         self.history_instances = []
-        self.running_index = 0
+        self.current_index = 0
 
     def connect(self, host, port):
         def inited():
@@ -134,6 +134,7 @@ class Simulation(EventSource):
             runinstance.reset_last_event_info()
 
             self.runinstance = runinstance
+            print("UKLADAM")########################################################################
             self.history_instances.append(runinstance)
 
             if self.running and utils.xml_bool(root, "quit"):
@@ -234,6 +235,7 @@ class Simulation(EventSource):
                 for p in xrange(self.runinstance.get_packets_count(j, i)):
                     self.receive(i, j, query_reports=False)
         self.query_reports()
+        print("receive_all")
 
     def fire_transition(self,
                         transition_id,
@@ -287,19 +289,20 @@ class Simulation(EventSource):
     def is_last_instance_active(self):
         return self.history_instances and self.history_instances[-1] == self.runinstance
     
-    def set_first(self):
-        self.controller.run_command("SET_FIRST", None)
-        self.set_runinstance_from_history(0)
-        self.history_instances = []
-        self.history_instances.append(self.runinstance)
-        self.sequence = controlseq.ControlSequence()
+#    def set_first(self):
+#        self.controller.run_command("SET_FIRST", None)
+#        self.set_runinstance_from_history(0)
+#        self.history_instances = []
+#        self.history_instances.append(self.runinstance)
+#        self.sequence = controlseq.ControlSequence()
         
     def set_state(self):
-        self.controller.run_command("SET_STATE {0}".format(self.running_index), None)
-        self.set_runinstance_from_history(self.running_index)
-        del self.history_instances[self.running_index+1:]
+        self.controller.run_command("SET_STATE {0}".format(self.current_index), None)
+        self.set_runinstance_from_history(self.current_index)
+        self.sequence.view.cut_list(self.current_index + 1, len(self.history_instances))
+        del self.history_instances[self.current_index + 1:]
     
-    def prepare_index(self, index):
-        self.running_index = index
+    def set_current_index(self, index):
+        self.current_index = index
         
       

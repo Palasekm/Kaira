@@ -167,7 +167,11 @@ class SequenceView(gtkutils.SimpleList):
         self.append(("{0}/{1}".format(process_id, thread_id),
                      "<span background='lightblue'>Receive</span>",
                      str(from_process)))
-
+        
+    def cut_list (self, i, len):
+        while i is not len:
+            self.remove_last_row()
+            i = i + 1
 
 class SequenceListWidget(gtk.HPaned):
 
