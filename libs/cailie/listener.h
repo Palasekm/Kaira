@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 #include "state.h"
-#include "node.h"
 
 namespace ca {
 
