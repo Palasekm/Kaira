@@ -101,8 +101,7 @@ class SimCanvasConfig(NetViewCanvasConfig):
             return None
         for transition in self.net.transitions():
             if transition.id is enabled[0]:
-                self.fire_transition(transition)
-            
+                self.fire_transition(transition)            
 
 class SimView(gtk.VBox):
 
@@ -143,6 +142,10 @@ class SimView(gtk.VBox):
         #######
         self.config.simview.app.console_write("prepare {0}".format(path[0]))
         self.simulation.set_current_index(path[0])
+        
+    def set_state(self):
+         self.button_auto_receive.set_active(False)
+         self.simulation.set_state()
 
     def _history(self):
         box = gtk.VBox()
@@ -168,7 +171,7 @@ class SimView(gtk.VBox):
         box.pack_start(button, False, False)
         
         button = gtk.Button("Set state")
-        button.connect("clicked", lambda w: self.simulation.set_state())
+        button.connect("clicked", lambda w: self.set_state())
         box.pack_start(button, False, False)
                         
         return box

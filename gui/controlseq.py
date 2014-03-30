@@ -172,6 +172,10 @@ class SequenceView(gtkutils.SimpleList):
         while i is not len:
             self.remove_last_row()
             i = i + 1
+        
+    #def cut_list(self, i):
+    #    self.remove_from_to_end(i - 1)
+        
 
 class SequenceListWidget(gtk.HPaned):
 

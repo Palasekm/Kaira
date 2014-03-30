@@ -227,7 +227,13 @@ class SimpleList(SimpleListBase):
         while i is not None:
             j = i
             i = self.store.iter_next(i)
-        self.store.remove(j)         
+        self.store.remove(j)
+
+    def remove_from_to_end(self, index):
+        i = 0
+        for row in self.store:
+            if i >= index:
+                self.store.remove(row.iter)
 
 class SimpleTree(SimpleListBase):
 
